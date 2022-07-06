@@ -1,4 +1,5 @@
 const userModel = require("../models/userModel");
+const jwt = require ("jsonwebtoken")
 
 
 const valid = function (value) {
@@ -11,12 +12,17 @@ const alphaOnly=function(value){
     return regexaAlpha.test(value)
 }
 
+const isValidtitle = (title) => {
+    return ["Mr", "Mrs", "Miss"].indexOf(title) !== -1
+}
+
+
 const createUser=async function(req,res){
     try {
  let {title,name,phone,email,password,address}=req.body
   
  if(!valid(title))return res.status(400).send({status:false,message:"Please give title"})
- if(title!= ("Mr" || "Mrs" || "Miss"))return res.status(400).send({status:false,message:"please give correct enum input"})
+ if(!isValidtitle(title))return res.status(400).send({status:false,message:"please give correct enum input"})
 
  if(!valid(name))return res.status(400).send({status:false,message:"Please give name"})
  if(!alphaOnly(name))return res.status(400).send({status:false,message:"In name use only alphabets.."})
@@ -41,8 +47,8 @@ if(!regexPassword.test(password))return res.status(400).send({status:false,messa
 if(address){
     if(!alphaOnly(address["street"]))return  res.status(400).send({status:false,message:"In street use only alphabets.."})
     if(!alphaOnly(address["city"]))return  res.status(400).send({status:false,message:"In city use only alphabets.."})
-    let regexPin=/^[0-9]$/
-    if(!regexPin.test(address["pincode"]))return  res.status(400).send({status:false,message:"In pincode use only digits.."})
+    let regexPin=/^[0-9]{6}$/
+    if(!regexPin.test(address["pincode"]))return  res.status(400).send({status:false,message:"In pincode use only 6 digits.."})
 }
 
 let userData = await userModel.create(req.body)
@@ -53,3 +59,36 @@ return res.status(201).send({status:true,  message:'Success', data:userData})
 
 }
 module.exports.createUser=createUser
+
+
+const login=async function (req,res){
+    try{
+        let {email,password}=req.body;
+        if(!email){
+        return res.status(400).send({status:false,msg:"please enter the email!"})
+        }
+        if(!password){
+        res.status(400).send({status:false,msg:"please enter the password"})
+        }
+        let loginCred=await userModel.findOne({email:email,password:password})
+        if (!loginCred)
+        return res.status(404).send({status:false,msg:"credentials passed does not match"});
+
+        let token=jwt.sign(
+           { 
+            userId: loginCred._id.toString(),
+            expiredate: "7d"
+           },
+           "BOOK-MANAGEMENT" //secrete Key 
+        );
+        res.setHeader("x-api-key",token);
+        return res.status(200).send({status:true,msg:'Success',token:token});
+
+         
+    }
+    catch(error){
+        return res.status(500).send({status:false,msg:error.message})
+    }
+}
+
+module.exports.login=login
