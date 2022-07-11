@@ -14,7 +14,7 @@ const validEmail=function(value){
 }
 
 const alphaOnly = function (value) {
-    let regexaAlpha = /^[A-Za-z]+$/
+    let regexaAlpha =/^[A-z]*$|^[A-z]+\s[A-z]*$/
     return regexaAlpha.test(value)
 }
 

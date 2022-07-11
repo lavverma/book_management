@@ -24,11 +24,9 @@ router.delete("/books/:bookId",middleware.authentication,middleware.authorizatio
 
 router.post("/books/:bookId/review",reviewController.createReview)
 
-// router.put("/books/:bookId/review/:reviewId",reviewController.updateReview)
+router.put("/books/:bookId/review/:reviewId",reviewController.updateReview)
 
-// router.delete("/books/:bookId/review/:reviewId")
+router.delete("/books/:bookId/review/:reviewId",reviewController.deletReview)
 
-
-// ,middleware.authorizationCreateBook
 
 module.exports = router;

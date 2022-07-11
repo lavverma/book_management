@@ -2,6 +2,7 @@ const bookModel = require("../models/bookModel");
 const reviewModel = require("../models/reviewModel")
 const userModel = require("../models/userModel")
 var mongoose = require('mongoose');
+const jwt = require("jsonwebtoken");
 const moment = require("moment")
 
 
@@ -22,10 +23,7 @@ const ISBNregex = function (ISBN) {
   return regex.test(ISBN)
 }
 
-// const alphaOnly = function (value) {
-//   let regexaAlpha = /^[A-Za-z]+$/
-//   return regexaAlpha.test(value)
-// }
+
 
 const createBook = async function (req, res) {
   try {
@@ -42,11 +40,16 @@ const createBook = async function (req, res) {
 
     if (!valid(excerpt)) return res.status(400).send({ status: false, message: "please provide excerpt" });
 
+
+
     if (!valid(userId)) return res.status(400).send({ status: false, message: "please provide userId" });
     if (!objectIdValid(userId)) return res.status(400).send({ status: false, message: "userId is invalid" });
     const checkUser = await userModel.findById(userId);
     if (!checkUser) return res.status(404).send({ status: false, message: "User not found" });
-
+    let token = req.headers["x-api-key"];
+    let decodedToken = jwt.verify(token, "BOOK-MANAGEMENT");
+    if(req.body.userId!=decodedToken.userId)return res.status(400).send({ status: false, message: "users only use their profile.." });
+   
 
     if (!valid(ISBN)) return res.status(400).send({ status: false, message: "please provide ISBN" });
     if (!ISBNregex(ISBN)) return res.status(400).send({ status: false, message: "please provide valid ISBN" });
