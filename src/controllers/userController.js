@@ -7,6 +7,12 @@ const valid = function (value) {
     if (typeof (value) === "string" && value.trim().length == 0) return false
     return true
 }
+
+const validEmail=function(value){
+    let regexEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+    return regexEmail.test(value)
+}
+
 const alphaOnly = function (value) {
     let regexaAlpha = /^[A-Za-z]+$/
     return regexaAlpha.test(value)
@@ -37,8 +43,7 @@ const createUser = async function (req, res) {
         if (existPhone.length != 0) return res.status(400).send({ status: false, message: `${phone} is already exist` })
 
         if (!valid(email)) return res.status(400).send({ status: false, message: "Please give email" })
-        let regexEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
-        if (!regexEmail.test(email)) return res.status(400).send({ status: false, message: "Please give email in proper format" })
+        if (!validEmail(email)) return res.status(400).send({ status: false, message: "Please give email in proper format" })
         let existEmail = await userModel.find({ email: email })
         if (existEmail != 0) return res.status(400).send({ status: false, message: `${email} is already exist` })
 
@@ -48,10 +53,13 @@ const createUser = async function (req, res) {
 
 
         if (address) {
+            if(typeof(address)!="object")return res.status(400).send({ status: false, message: "address should be in object format" })
             if (!alphaOnly(address["street"])) return res.status(400).send({ status: false, message: "In street use only alphabets.." })
             if (!alphaOnly(address["city"])) return res.status(400).send({ status: false, message: "In city use only alphabets.." })
+           if (address["pincode"]){
             let regexPin = /^[0-9]{6}$/
             if (!regexPin.test(address["pincode"])) return res.status(400).send({ status: false, message: "In pincode use only 6 digits.." })
+        }
         }
 
         let userData = await userModel.create(req.body)
@@ -71,20 +79,19 @@ const login = async function (req, res) {
 
         let { email, password } = req.body;
         
-        if (!email) {
-            return res.status(400).send({ status: false,message: "please enter the email!" })
-        }
-        if (!password) {
-            res.status(400).send({ status: false, message: "please enter the password" })
-        }
+        if (!email) return res.status(400).send({ status: false,message: "please enter the email!" })
+        
+        if(!validEmail(email))return  res.status(400).send({ status: false,message: "please enter valid email" })
+        
+        if (!password) return res.status(400).send({ status: false, message: "please enter the password" })
+        
         let loginCred = await userModel.findOne({ email: email, password: password })
-        if (!loginCred)
-            return res.status(404).send({ status: false,message: "credentials passed does not match" });
+        if (!loginCred) return res.status(404).send({ status: false,message: "credentials passed does not match" });
 
         let token = jwt.sign({
                 userId: loginCred._id.toString()},
                 "BOOK-MANAGEMENT", //secrete Key
-                { expiresIn: '10m'
+                { expiresIn: '2d'
                 });
         res.setHeader("x-api-key", token);
         return res.status(200).send({ status: true, message: 'Success', data:token });

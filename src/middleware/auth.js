@@ -51,18 +51,18 @@ const authorization = async function (req, res, next) {
 module.exports.authorization = authorization;
 
 
-const authorizationCreateBook=async function(req,res,next){
-    try {
-        let token = req.headers["x-api-key"];
+// const authorizationCreateBook=async function(req,res,next){
+//     try {
+//         let token = req.headers["x-api-key"];
 
-    let decodedToken = jwt.verify(token, "BOOK-MANAGEMENT");
+//     let decodedToken = jwt.verify(token, "BOOK-MANAGEMENT");
 
-    if(req.body.userId!=decodedToken.userId)return res.status(400).send({ status: false, message: "users only use their profile.." });
+//     if(req.body.userId!=decodedToken.userId)return res.status(400).send({ status: false, message: "users only use their profile.." });
 
-    next()
+//     next()
 
-} catch (err) {
-    return res.status(500).send({ status: false, message: err.message });
-  }
-}
-module.exports.authorizationCreateBook=authorizationCreateBook
+// } catch (err) {
+//     return res.status(500).send({ status: false, message: err.message });
+//   }
+// }
+// module.exports.authorizationCreateBook=authorizationCreateBook
