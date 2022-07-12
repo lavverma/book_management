@@ -1,6 +1,13 @@
 const userModel = require("../models/userModel");
 const bookModel = require("../models/bookModel");
 const jwt = require("jsonwebtoken");
+var mongoose = require('mongoose');
+
+
+const objectIdValid = function (value) {
+  return mongoose.Types.ObjectId.isValid(value)
+}
+
 
 let authentication = async function (req, res, next) {
   try {
@@ -11,10 +18,9 @@ let authentication = async function (req, res, next) {
     
     jwt.verify(token, "BOOK-MANAGEMENT",function(err,decodedToken){
         if(err){
-            return res.status(400).send({ status: false, message: err.message })
+            return res.status(401).send({ status: false, message: err.message })
         }
         else{
-            // req.userId=decodedToken.userId
            next()
         }
     });
@@ -35,11 +41,11 @@ const authorization = async function (req, res, next) {
     let decodedToken = jwt.verify(token, "BOOK-MANAGEMENT");
 
     let bookId = req.params.bookId;
-    let user = await bookModel.findOne({ _id: bookId });
+    if (!objectIdValid(bookId)) return res.status(400).send({ status: false, message: "bookId is invalid" });
+    let avail = await bookModel.findOne({ _id: bookId, isDeleted: false })
+    if (!avail) return res.status(404).send({ status: false, message: "Book not found of this Id" })
 
-    if(!user)return res.status(404).send({status:false,message:"book is not present"})
-
-    if (user.userId != decodedToken.userId)return res.status(400).send({ status: false, message: "user can't be manupilate someone else..!" });
+    if (avail.userId != decodedToken.userId)return res.status(400).send({ status: false, message: "user can't be manupilate someone else data!" });
 
     next()
 

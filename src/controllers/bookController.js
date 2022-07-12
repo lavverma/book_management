@@ -36,7 +36,7 @@ const createBook = async function (req, res) {
 
     if (!valid(title)) return res.status(400).send({ status: false, message: "please provide title" });
     const checkTitle = await bookModel.findOne({ title: title, isDeleted: false, });
-    if (checkTitle) return res.status(200).send({ status: false, message: `${checkTitle} already exist` });
+    if (checkTitle) return res.status(200).send({ status: false, message: `${title} already exist` });
 
     if (!valid(excerpt)) return res.status(400).send({ status: false, message: "please provide excerpt" });
 
@@ -58,7 +58,7 @@ const createBook = async function (req, res) {
     if (!valid(category)) return res.status(400).send({ status: false, message: "please provide category" });
     if (!subcategory) return res.status(400).send({ status: false, message: "please provide subcategory" });
 
-    if (!valid(releasedAt)) return res.status(400).send({ status: false, message: "please provide releasedAt" });
+    if (!valid(releasedAt)) return res.status(400).send({ status: false, message: "please provide released date" });
 
     if (!moment(releasedAt, "YYYY-MM-DD", true).isValid()) return res.status(400).send({ status: false, message: "Enter a valid date with the format (YYYY-MM-DD)..." });
 
@@ -143,12 +143,13 @@ module.exports.getBookByParam = getBookByParam
 const updateBook = async function (req, res) {
   try {
 
-    let data = req.body
-    let id = req.params.bookId
-    if (!objectIdValid(id)) return res.status(400).send({ status: false, message: "bookId is invalid" });
-    let avail = await bookModel.findOne({ _id: id, isDeleted: false })
-    if (!avail) return res.status(404).send({ status: false, message: "Book not found of this Id" })
+    let bookId = req.params.bookId;
+    // if (!objectIdValid(bookId)) return res.status(400).send({ status: false, message: "bookId is invalid" });
+    // let avail = await bookModel.findOne({ _id: bookId, isDeleted: false })
+    // if (!avail) return res.status(404).send({ status: false, message: "Book not found of this Id" })
 
+    
+    let data = req.body
     if (!dataExist(data)) return res.status(400).send({ status: false, message: "please provide data that you want to be update.." })
 
     let { title, excerpt, releaseDate, ISBN } = data
@@ -179,7 +180,7 @@ const updateBook = async function (req, res) {
     }
 
 
-    let result = await bookModel.findOneAndUpdate({ _id: id, isDeleted: false }, {
+    let result = await bookModel.findOneAndUpdate({ _id: bookId, isDeleted: false }, {
       title: title,
       excerpt: excerpt,
       ISBN: ISBN,

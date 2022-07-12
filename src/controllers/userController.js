@@ -50,7 +50,7 @@ const createUser = async function (req, res) {
 
         if (!valid(password)) return res.status(400).send({ status: false, message: "Please give password" })
         let regexPassword = /^.{8,15}$/
-        if (!regexPassword.test(password)) return res.status(400).send({ status: false, message: "Inpassword use minimum 8 and maximum 15 character" })
+        if (!regexPassword.test(password)) return res.status(400).send({ status: false, message: "In password use minimum 8 and maximum 15 character" })
 
 
         if (address) {
@@ -80,11 +80,11 @@ const login = async function (req, res) {
 
         let { email, password } = req.body;
         
-        if (!email) return res.status(400).send({ status: false,message: "please enter the email!" })
-        
-        if(!validEmail(email))return  res.status(400).send({ status: false,message: "please enter valid email" })
-        
-        if (!password) return res.status(400).send({ status: false, message: "please enter the password" })
+      
+        if(!valid(email))return  res.status(400).send({ status: false,message: "please enter email" })
+        if(!validEmail(email))return  res.status(400).send({ status: false,message: "please enter email in proper format" })
+  
+        if(!valid(password))return  res.status(400).send({ status: false,message: "please enter valid password" })
         
         let loginCred = await userModel.findOne({ email: email, password: password })
         if (!loginCred) return res.status(404).send({ status: false,message: "credentials passed does not match" });

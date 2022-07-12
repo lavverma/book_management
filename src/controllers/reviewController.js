@@ -68,7 +68,7 @@ const createReview = async function (req, res) {
 
         const updatedBook = { _id, title, excerpt, userId, category, subcategory, isDeleted, reviews, releasedAt, createdAt, updatedAt, reviewsData }
 
-        return res.status(200).send({ status: true, message: "Success", data: updatedBook })
+        return res.status(201).send({ status: true, message: "Success", data: updatedBook })
 
 
     }
@@ -103,8 +103,6 @@ let updateReview = async function (req, res) {
             if (!valid(review)) return res.status(400).send({ status: false, message: "review is invalid.." })
             reviewData.review = review
             await reviewData.save()
-        } else {
-            review = reviewData.review
         }
 
         if (rating) {
@@ -112,17 +110,14 @@ let updateReview = async function (req, res) {
             if (!regexRating.test(rating)) return res.status(400).send({ status: false, message: "rating should be in between 1-5" })
             reviewData.rating = rating
             await reviewData.save()
-        } else {
-            rating = reviewData.rating
         }
+
 
         if (reviewedBy) {
             if (!valid(reviewedBy)) return res.status(400).send({ status: false, message: "please give reviewer's name" })
             if (!alphaOnly(reviewedBy)) return res.status(400).send({ status: false, message: "please give valid reviewer's name..." })
             reviewData.reviewedBy = reviewedBy
             await reviewData.save()
-        } else {
-            reviewedBy = reviewData.reviewedBy
         }
 
         let reviewsData = await reviewModel.find({ _id: reviewId })
