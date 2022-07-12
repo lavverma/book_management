@@ -33,6 +33,7 @@ const createReview = async function (req, res) {
         let reviewDetail = req.body
         if (!dataExist(reviewDetail))
             return res.status(400).send({ status: false, message: "please provide reviewDetail" });
+
         let { review, rating, reviewedBy } = reviewDetail
 
         if (review) {
@@ -111,7 +112,7 @@ let updateReview = async function (req, res) {
             if (!regexRating.test(rating)) return res.status(400).send({ status: false, message: "rating should be in between 1-5" })
             reviewData.rating = rating
             await reviewData.save()
-        }else {
+        } else {
             rating = reviewData.rating
         }
 
@@ -124,7 +125,7 @@ let updateReview = async function (req, res) {
             reviewedBy = reviewData.reviewedBy
         }
 
-        let reviewsData = await reviewModel.find({_id:reviewId})
+        let reviewsData = await reviewModel.find({ _id: reviewId })
 
         const { _id, title, excerpt, userId, category, subcategory, isDeleted, reviews, releasedAt, createdAt, updatedAt } = book
 
@@ -141,7 +142,7 @@ module.exports.updateReview = updateReview
 
 
 
-let deletReview=async function(req,res){
+let deletReview = async function (req, res) {
     try {
 
         let bookId = req.params.bookId
@@ -154,17 +155,17 @@ let deletReview=async function(req,res){
         let reviewData = await reviewModel.findOne({ _id: reviewId, isDeleted: false })
         if (!reviewData) return res.status(404).send({ status: false, message: "review not found !" })
 
-        reviewData.isDeleted=true
+        reviewData.isDeleted = true
         await reviewData.save()
-        
+
         book.reviews--
-        await book.save()            
+        await book.save()
 
         return res.status(200).send({ status: true, message: "Success", data: reviewData })
 
+    }
+    catch (err) {
+        return res.status(500).send({ status: false, message: err.message });
+    }
 }
-catch (err) {
-    return res.status(500).send({ status: false, message: err.message });
-}
-}
-module.exports.deletReview=deletReview
+module.exports.deletReview = deletReview
