@@ -41,7 +41,7 @@ const createUser = async function (req, res) {
         let regexPhone = /^(?:(?:\+|0{0,2})91(\s*|[\-])?|[0]?)?([6789]\d{2}([ -]?)\d{3}([ -]?)\d{4})$/
         if (!regexPhone.test(phone)) return res.status(400).send({ status: false, message: "Please give phone no. in proper format" })
         let existPhone = await userModel.find({ phone: phone })
-        if (existPhone.length != 0) return res.status(200).send({ status: false, message: `${phone} is already exist` })
+        if (existPhone.length != 0) return res.status(400).send({ status: false, message: `${phone} is already exist` })
 
         if (!valid(email)) return res.status(400).send({ status: false, message: "Please give email" })
         if (!validEmail(email)) return res.status(400).send({ status: false, message: "Please give email in proper format" })

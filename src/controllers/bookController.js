@@ -36,7 +36,7 @@ const createBook = async function (req, res) {
 
     if (!valid(title)) return res.status(400).send({ status: false, message: "please provide title" });
     const checkTitle = await bookModel.findOne({ title: title, isDeleted: false, });
-    if (checkTitle) return res.status(200).send({ status: false, message: `${title} already exist` });
+    if (checkTitle) return res.status(400).send({ status: false, message: `${title} already exist` });
 
     if (!valid(excerpt)) return res.status(400).send({ status: false, message: "please provide excerpt" });
 
@@ -53,7 +53,7 @@ const createBook = async function (req, res) {
     if (!ISBNregex(ISBN)) return res.status(400).send({ status: false, message: "please provide valid ISBN" });
 
     const checkISBN = await bookModel.findOne({ ISBN: ISBN, isDeleted: false, });
-    if (checkISBN) return res.status(200).send({ status: false, message: "book alredy exist with this ISBN" });
+    if (checkISBN) return res.status(400).send({ status: false, message: "book alredy exist with this ISBN" });
 
     if (!valid(category)) return res.status(400).send({ status: false, message: "please provide category" });
     if (!subcategory) return res.status(400).send({ status: false, message: "please provide subcategory" });
