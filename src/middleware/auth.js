@@ -45,7 +45,7 @@ const authorization = async function (req, res, next) {
     let avail = await bookModel.findOne({ _id: bookId, isDeleted: false })
     if (!avail) return res.status(404).send({ status: false, message: "Book not found of this Id" })
 
-    if (avail.userId != decodedToken.userId)return res.status(400).send({ status: false, message: "user can't be manupilate someone else data!" });
+    if (avail.userId != decodedToken.userId)return res.status(403).send({ status: false, message: "user can't be manupilate someone else data!" });
 
     next()
 

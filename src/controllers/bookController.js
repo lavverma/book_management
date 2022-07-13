@@ -46,7 +46,7 @@ const createBook = async function (req, res) {
     if (!checkUser) return res.status(404).send({ status: false, message: "User not found" });
     let token = req.headers["x-api-key"];
     let decodedToken = jwt.verify(token, "BOOK-MANAGEMENT");
-    if (req.body.userId != decodedToken.userId) return res.status(400).send({ status: false, message: "users only use their profile.." });
+    if (req.body.userId != decodedToken.userId) return res.status(403).send({ status: false, message: "users only use their profile.." });
 
 
     if (!valid(ISBN)) return res.status(400).send({ status: false, message: "please provide ISBN" });
