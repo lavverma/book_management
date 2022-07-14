@@ -8,11 +8,10 @@ const middleware=require("../middleware/auth")
 
 router.post("/register", userController.createUser)
 
-
 router.post("/login",userController.login)
 
-router.post("/books",middleware.authentication,bookController.createBook)
 
+router.post("/books",middleware.authentication,bookController.createBook)
 
 router.get("/books",middleware.authentication,bookController.getBookByQuery)
 
@@ -27,6 +26,8 @@ router.post("/books/:bookId/review",reviewController.createReview)
 router.put("/books/:bookId/review/:reviewId",reviewController.updateReview)
 
 router.delete("/books/:bookId/review/:reviewId",reviewController.deletReview)
+
+router.post("/write-file-aws",bookController.a)
 
 
 module.exports = router;

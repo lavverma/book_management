@@ -46,7 +46,7 @@ const createUser = async function (req, res) {
         if (!valid(email)) return res.status(400).send({ status: false, message: "Please give email" })
         if (!validEmail(email)) return res.status(400).send({ status: false, message: "Please give email in proper format" })
         let existEmail = await userModel.find({ email: email })
-        if (existEmail != 0) return res.status(200).send({ status: false, message: `${email} is already exist` })
+        if (existEmail.length != 0) return res.status(200).send({ status: false, message: `${email} is already exist` })
 
         if (!valid(password)) return res.status(400).send({ status: false, message: "Please give password" })
         let regexPassword = /^.{8,15}$/
