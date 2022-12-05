@@ -64,11 +64,9 @@ const createReview = async function (req, res) {
             await book.save()
         }
 
-        const { _id, title, excerpt, userId, category, subcategory, isDeleted, reviews, releasedAt, createdAt, updatedAt } = book
-
-        const updatedBook = { _id, title, excerpt, userId, category, subcategory, isDeleted, reviews, releasedAt, createdAt, updatedAt, reviewsData }
-
-        return res.status(201).send({ status: true, message: "Success", data: updatedBook })
+    book.reviewsData = reviewsData
+       
+        return res.status(201).send({ status: true, message: "Success", data: book })
 
 
     }
@@ -76,7 +74,6 @@ const createReview = async function (req, res) {
         return res.status(500).send({ status: false, message: err.message });
     }
 }
-module.exports.createReview = createReview
 
 
 
@@ -121,23 +118,20 @@ let updateReview = async function (req, res) {
         }
 
         let reviewsData = await reviewModel.find({ _id: reviewId })
+        
+        book.reviewsData = reviewsData
 
-        const { _id, title, excerpt, userId, category, subcategory, isDeleted, reviews, releasedAt, createdAt, updatedAt } = book
-
-        const updatedReview = { _id, title, excerpt, userId, category, subcategory, isDeleted, reviews, releasedAt, createdAt, updatedAt, reviewsData }
-
-        return res.status(200).send({ status: true, message: "Success", data: updatedReview })
+        return res.status(200).send({ status: true, message: "Success", data: book })
 
     }
     catch (err) {
         return res.status(500).send({ status: false, message: err.message });
     }
 }
-module.exports.updateReview = updateReview
 
 
 
-let deletReview = async function (req, res) {
+let deleteReview = async function (req, res) {
     try {
 
         let bookId = req.params.bookId
@@ -163,4 +157,5 @@ let deletReview = async function (req, res) {
         return res.status(500).send({ status: false, message: err.message });
     }
 }
-module.exports.deletReview = deletReview
+
+module.exports = {createReview,updateReview ,deleteReview}

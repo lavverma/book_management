@@ -21,6 +21,7 @@ let authentication = async function (req, res, next) {
             return res.status(401).send({ status: false, message: err.message })
         }
         else{
+          // req.token = decodedToken;
            next()
         }
     });
@@ -29,8 +30,6 @@ let authentication = async function (req, res, next) {
     res.status(500).send({ status: false, message: error.message });
   }
 };
-
-module.exports.authentication = authentication;
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -45,7 +44,7 @@ const authorization = async function (req, res, next) {
     let avail = await bookModel.findOne({ _id: bookId, isDeleted: false })
     if (!avail) return res.status(404).send({ status: false, message: "Book not found of this Id" })
 
-    if (avail.userId != decodedToken.userId)return res.status(403).send({ status: false, message: "user can't be manupilate someone else data!" });
+    if (avail.userId != decodedToken.userId)return res.status(403).send({ status: false, message: "user can't be manipulate someone else data!" });
 
     next()
 
@@ -54,5 +53,5 @@ const authorization = async function (req, res, next) {
   }
 };
 
-module.exports.authorization = authorization;
+module.exports = {authentication, authorization}
 

@@ -14,11 +14,11 @@ const validEmail=function(value){
 }
 
 const alphaOnly = function (value) {
-    let regexaAlpha =/^[A-z]*$|^[A-z]+\s[A-z]*$/
-    return regexaAlpha.test(value)
+    let regexAlpha =/^[A-z]*$|^[A-z]+\s[A-z]*$/
+    return regexAlpha.test(value)
 }
 
-const isValidtitle = (title) => {
+const isValidTitle = (title) => {
     return ["Mr", "Mrs", "Miss"].indexOf(title) !== -1
 }
 
@@ -32,7 +32,7 @@ const createUser = async function (req, res) {
         let { title, name, phone, email, password, address } = req.body
 
         if (!valid(title)) return res.status(400).send({ status: false, message: "Please give title" })
-        if (!isValidtitle(title)) return res.status(400).send({ status: false, message: "please give correct enum input" })
+        if (!isValidTitle(title)) return res.status(400).send({ status: false, message: "please give Mr/Miss/Mrs" })
 
         if (!valid(name)) return res.status(400).send({ status: false, message: "Please give name" })
         if (!alphaOnly(name)) return res.status(400).send({ status: false, message: "In name use only alphabets.." })
@@ -69,7 +69,7 @@ const createUser = async function (req, res) {
     } catch (err) { return res.status(500).send({ status: false, message: err.message }) }
 
 }
-module.exports.createUser = createUser
+// module.exports.createUser = createUser
 
 
 const login = async function (req, res) {
@@ -80,7 +80,6 @@ const login = async function (req, res) {
 
         let { email, password } = req.body;
         
-      
         if(!valid(email))return  res.status(400).send({ status: false,message: "please enter email" })
         if(!validEmail(email))return  res.status(400).send({ status: false,message: "please enter email in proper format" })
   
@@ -92,7 +91,7 @@ const login = async function (req, res) {
         let token = jwt.sign({
                 userId: loginCred._id.toString()},
                 "BOOK-MANAGEMENT", //secrete Key
-                { expiresIn: '2d'
+                { expiresIn: '5h'
                 });
         res.setHeader("x-api-key", token);
         return res.status(200).send({ status: true, message: 'Success', data:token });
@@ -103,4 +102,6 @@ const login = async function (req, res) {
     }
 }
 
-module.exports.login = login
+// module.exports.login = login
+
+module.exports = {createUser , login}

@@ -14,6 +14,7 @@ const bookSchema = new mongoose.Schema({
         required: true,
         trim:true
     },
+    
 
     userId: {
         type: ObjectId,
@@ -62,13 +63,6 @@ const bookSchema = new mongoose.Schema({
         type:Date,
         required: true,
         default:null
-    },
-
-    bookCover:{
-        type:String,
-        required: true,
-        unique: true,
-        trim:true
     }
 
 }, { timestamps: true });
